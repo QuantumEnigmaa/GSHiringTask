@@ -1,0 +1,8 @@
+#Ignore the helm chart directory
+beeant-webapp/
+
+#Ignore .git folder
+.git
+
+#Ignore all .md files
+.md
