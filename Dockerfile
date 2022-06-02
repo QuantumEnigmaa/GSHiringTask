@@ -15,5 +15,6 @@ COPY --from=builder /build/beeant .
 RUN addgroup -g 1000 beeant && adduser -u 1000 -G beeant -D beeant
 USER beeant
 EXPOSE 8088
+EXPOSE 2112
 
 ENTRYPOINT ["./beeant"]
