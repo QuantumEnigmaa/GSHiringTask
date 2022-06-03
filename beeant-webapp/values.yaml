@@ -28,6 +28,13 @@ beeantLabels: {
   context: hiring-task
 }
 
+beeantAnnotations: {
+  prometheus.io/scrape: 'true',
+  prometheus.io/path: '/metrics',
+  prometheus.io/port: '8088'
+
+}
+
 service:
   name: beeant-webapp-service 
   type: NodePort
@@ -39,16 +46,27 @@ ingress:
   name: beeant-webapp-ingress
   annotations: 
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: "*.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+    - host: "test.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
       paths:
-      - path: /*
-        pathType: ImplementationSpecific
+      - path: /beeant(/|$)(.*)
+        pathType: Prefix
+        backend: 
+          service:
+            name: beeant-webapp-service
+            port: 
+              number: 8088
+    - host: "prom.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+      paths:
+      - path: /prom
+        pathType: Prefix
         backend:
-          serviceName: beeant-webapp-service
-          servicePort: 8088
+          service:
+            name: monitoring-kube-prometheus-prometheus
+            port:
+              number: 9090
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
