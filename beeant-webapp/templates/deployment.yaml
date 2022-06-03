@@ -1,32 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "beeant-webapp.fullname" . }}
+  name: {{ .Values.fullnameOverride  }}
+  {{- with .Values.beeantLabels }}
   labels:
-    {{- include "beeant-webapp.labels" . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
+    {{- with .Values.beeantLabels }}
     matchLabels:
-      {{- include "beeant-webapp.selectorLabels" . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- with .Values.beeantLabels }}
       labels:
-        {{- include "beeant-webapp.selectorLabels" . | nindent 8 }}
-    spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "beeant-webapp.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -35,8 +30,5 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8088
+              containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
