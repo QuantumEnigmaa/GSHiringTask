@@ -49,7 +49,7 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: "test.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+    - host: "*.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
       paths:
       - path: /beeant(/|$)(.*)
         pathType: Prefix
@@ -58,8 +58,6 @@ ingress:
             name: beeant-webapp-service
             port: 
               number: 8088
-    - host: "prom.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
-      paths:
       - path: /prom
         pathType: Prefix
         backend:
@@ -67,6 +65,13 @@ ingress:
             name: monitoring-kube-prometheus-prometheus
             port:
               number: 9090
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: monitoring-grafana
+            port:
+              number: 80
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

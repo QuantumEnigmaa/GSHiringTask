@@ -1,0 +1,50 @@
+# Restricting deployments and components scrapped
+alertmanager:
+  enabled: false
+alertmanagerFiles:
+  alertmanager.yml: ""
+kubeStateMetrics:
+  enabled: false
+nodeExporter:
+  enabled: false
+pushgateway:
+  enabled: false
+kubeApiServer:
+  enabled: false
+kubelet:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+
+# Configuring Prometheus and Grafana for them to be reachable from outside
+prometheus:
+  service:
+    type: NodePort
+grafana:
+  service: 
+    type: NodePort
+  securityContext:
+    runAsUser: 1000
+  persistence:
+    enabled: true
+
+# Config only for prometheus-community/prometheus
+# server:
+#   useExistingClusterRoleName: admin
+#   namespaces:
+#     - default
+#   persistentVolume:
+#     enabled: false
+#   statefulSet:
+#     enabled: true
+#   service:
+#     type: NodePort
+#     servicePort: 9090
