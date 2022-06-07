@@ -26,13 +26,22 @@ kubeProxy:
 
 # Configuring Prometheus and Grafana for them to be reachable from outside
 prometheus:
+  serviceAccount:
+    create: false
+    name: prometheus-privileged
   service:
     type: NodePort
+  prometheusSpec:
+    serviceMonitorSelector:
+      matchLabels:
+        component: beeant-webapp
 grafana:
   service: 
     type: NodePort
   securityContext:
     runAsUser: 1000
+  rbac:
+    useExistingRole: cluster-admin
   persistence:
     enabled: true
 
