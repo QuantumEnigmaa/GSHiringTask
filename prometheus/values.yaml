@@ -35,7 +35,42 @@ prometheus:
     serviceMonitorSelector:
       matchLabels:
         component: beeant-webapp
+  additionalServiceMonitors:
+  - name: "beeant-webapp-service"
+    additionalLabels:
+      component: beeant-webapp
+    selector:
+      matchLabels: 
+        component: beeant-webapp
+    namespaceSelector:
+      matchNames:
+      - default 
+    endpoints:
+    - port: http
+      interval: 30s
+      scrapeTimeout: 60s
+      path: /metrics
+  # additionalPodMonitors:
+  # - name: "beeant-webapp-monitor"
+  #   additionalLabels:
+  #     component: beeant-webapp
+  #   selector:
+  #     matchLabels: 
+  #       component: beeant-webapp
+  #   namespaceSelector:
+  #     matchNames:
+  #     - default 
+  #   podMetricsEndpoints:
+  #   - port: http 
+  #     interval: 30s
+  #     scrapeTimeout: 60s
+  #     path: /metrics
+
+commonLabels:
+  component: beeant-webapp
+
 grafana:
+  adminPassword: beeant-graf
   service: 
     type: NodePort
   securityContext:
@@ -44,16 +79,3 @@ grafana:
     useExistingRole: cluster-admin
   persistence:
     enabled: true
-
-# Config only for prometheus-community/prometheus
-# server:
-#   useExistingClusterRoleName: admin
-#   namespaces:
-#     - default
-#   persistentVolume:
-#     enabled: false
-#   statefulSet:
-#     enabled: true
-#   service:
-#     type: NodePort
-#     servicePort: 9090

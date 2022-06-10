@@ -41,15 +41,46 @@ service:
   port: 8088
   targetPort: 8088
 
+grafanaIngress:
+  enabled: true
+  name: grafana-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: "grafana.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: monitoring-grafana
+            port:
+              number: 80
+
+promIngress:
+  enabled: true
+  name: prometheus-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: "prom.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: monitoring-kube-prometheus-prometheus
+            port:
+              number: 9090
+
 ingress:
   enabled: true
   name: beeant-webapp-ingress
   annotations: 
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: "*.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
+    - host: "test.h4h8n.k8s.gorilla.eu-central-1.aws.gigantic.io"
       paths:
       - path: /beeant(/|$)(.*)
         pathType: Prefix
@@ -58,20 +89,20 @@ ingress:
             name: beeant-webapp-service
             port: 
               number: 8088
-      - path: /prom
-        pathType: Prefix
-        backend:
-          service:
-            name: monitoring-kube-prometheus-prometheus
-            port:
-              number: 9090
-      - path: /grafana
-        pathType: Prefix
-        backend:
-          service:
-            name: monitoring-grafana
-            port:
-              number: 80
+      # - path: /prom(/|$)(.*)
+      #   pathType: ImplementationSpecific
+      #   backend:
+      #     service:
+      #       name: monitoring-kube-prometheus-prometheus
+      #       port:
+      #         number: 9090
+      # - path: /grafana(/|$)(.*)
+      #   pathType: ImplementationSpecific
+      #   backend:
+      #     service:
+      #       name: monitoring-grafana
+      #       port:
+      #         number: 80
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
